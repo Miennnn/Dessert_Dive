@@ -1,16 +1,15 @@
-// app/screens/DessertsNearMe.tsx
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { ThemedText} from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 
-const IngredientsList: React.FC = () => {
+function IngredientsList() {
   return (
     <ThemedView style={styles.container}>
       <ThemedText style={styles.text}>Ingredients List</ThemedText>
     </ThemedView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
