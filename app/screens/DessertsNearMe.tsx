@@ -1,15 +1,16 @@
+// app/screens/DessertsNearMe.tsx
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { ThemedText} from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 
-function DessertsNearMe() {
+const DessertsNearMe: React.FC = () => {
   return (
     <ThemedView style={styles.container}>
       <ThemedText style={styles.text}>Desserts Near Me</ThemedText>
     </ThemedView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {

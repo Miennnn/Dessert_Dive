@@ -33,16 +33,16 @@ const Title: React.FC = () => {
 const Buttons: React.FC<{ navigation: HomeScreenNavigationProp }> = ({ navigation }) => {
   return (
     <ThemedView style={styles.buttonContainer}>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('screens/DessertsNearMe')}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('DessertsNearMe')}>
         <ThemedText style={styles.buttonText}>Desserts near me</ThemedText>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('screens/Recipes')}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Recipes')}>
         <ThemedText style={styles.buttonText}>Recipes</ThemedText>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('screens/IngredientsList')}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('IngredientsList')}>
         <ThemedText style={styles.buttonText}>Ingredients list</ThemedText>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('screens/Account')}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Account')}>
         <ThemedText style={styles.buttonText}>Account</ThemedText>
       </TouchableOpacity>
     </ThemedView>
