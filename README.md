@@ -1,50 +1,85 @@
-# Welcome to your Expo app 👋
+## Dessert Dive
+Dessert Dive is a React Native application designed to help users find desserts near them, explore recipes, manage an ingredients list, and handle their account information.
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+# Table of Contents
+Installation
+Usage
+Project Structure
+Navigation
+Screens
+Components
+Contributing
+License
+Installation
+Prerequisites
 
-## Get started
+# Before you begin, ensure you have met the following requirements:
 
-1. Install dependencies
+You have installed Node.js and npm.
+You have installed React Native CLI.
+You have installed Expo CLI (if using Expo).
 
-   ```bash
-   npm install
-   ```
+# Steps
 
-2. Start the app
+Clone the repository:
+git clone https://github.com/your-username/dessert-dive.git
 
-   ```bash
-    npx expo start
-   ```
+Navigate to the project directory:
+cd dessert-dive
 
-In the output, you'll find options to open the app in a
+Install the dependencies:
+npm install
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+Start the Metro bundler:
+npm start
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
-## Get a fresh project
+# Here's a brief overview of the project's structure:
 
-When you're ready, run:
+app/
+  _layout.tsx
+  +html.tsx
+  +not-found.tsx
+  screens/
+    Account.tsx
+    DessertsNearMe.tsx
+    HomeScreen.tsx
+    IngredientsList.tsx
+    Recipes.tsx
+components/
+  ParallaxScrollView.tsx
+  ThemedComponents.tsx
+App.tsx
 
-```bash
-npm run reset-project
-```
+# Explanation
+app/_layout.tsx: Contains the stack navigator setup.
+app/+html.tsx: Custom HTML wrapper for web (if applicable).
+app/+not-found.tsx: Handles 404 errors.
+app/screens/: Directory containing all screen components.
+components/: Directory containing shared components.
+App.tsx: Entry point of the application.
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+# Navigation
+The navigation setup uses React Navigation's stack navigator:
 
-## Learn more
+Home Screen: Main entry point of the app.
+Desserts Near Me: Displays desserts available near the user.
+Recipes: Shows a list of dessert recipes.
+Ingredients List: Manages the user's ingredients list.
+Account: Handles user account information.
 
-To learn more about developing your project with Expo, look at the following resources:
+# Screens
+HomeScreen.tsx
+The main screen that includes navigation buttons to other screens.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+DessertsNearMe.tsx
+Displays desserts available near the user.
 
-## Join the community
+Recipes.tsx
+Shows a list of dessert recipes.
 
-Join our community of developers creating universal apps.
+IngredientsList.tsx
+Manages the user's ingredients list.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Account.tsx
+Handles user account information.
