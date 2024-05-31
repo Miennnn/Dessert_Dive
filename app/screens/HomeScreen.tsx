@@ -7,10 +7,11 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 
 type RootStackParamList = {
-  HomeScreen: undefined;
+  HomeScreen: { preferences?: any };
   DessertsNearMe: undefined;
   Recipes: undefined;
   IngredientsList: undefined;
+  Questionnaire: undefined;
   Account: undefined;
 };
 
@@ -30,6 +31,18 @@ const Title: React.FC = () => {
   );
 };
 
+const Preferences: React.FC<{ preferences: any }> = ({ preferences }) => {
+  if (!preferences) return null;
+
+  return (
+    <ThemedView style={styles.preferencesContainer}>
+      <ThemedText style={styles.preferenceText}>Name: {preferences.name}</ThemedText>
+      <ThemedText style={styles.preferenceText}>Favorite Dessert: {preferences.favoriteDessert}</ThemedText>
+      <ThemedText style={styles.preferenceText}>Comments: {preferences.comments}</ThemedText>
+    </ThemedView>
+  );
+};
+
 const Buttons: React.FC<{ navigation: HomeScreenNavigationProp }> = ({ navigation }) => {
   return (
     <ThemedView style={styles.buttonContainer}>
@@ -44,6 +57,9 @@ const Buttons: React.FC<{ navigation: HomeScreenNavigationProp }> = ({ navigatio
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('screens/Account')}>
         <ThemedText style={styles.buttonText}>Account</ThemedText>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('screens/Questionnaire')}>
+        <ThemedText style={styles.buttonText}>Questionnaire</ThemedText>
       </TouchableOpacity>
     </ThemedView>
   );

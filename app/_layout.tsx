@@ -4,6 +4,7 @@ import HomeScreen from './screens/HomeScreen';
 import DessertsNearMe from './screens/DessertsNearMe';
 import Recipes from './screens/Recipes';
 import IngredientsList from './screens/IngredientsList';
+import Questionnaire from './screens/Questionnaire';
 import Account from './screens/Account';
 
 type RootStackParamList = {
@@ -11,6 +12,7 @@ type RootStackParamList = {
   DessertsNearMe: undefined;
   Recipes: undefined;
   IngredientsList: undefined;
+  Questionnaire: undefined;
   Account: undefined;
 };
 
@@ -23,6 +25,7 @@ function Layout() {
       <Stack.Screen name="screens/DessertsNearMe" component={DessertsNearMe} />
       <Stack.Screen name="screens/Recipes" component={Recipes} />
       <Stack.Screen name="screens/IngredientsList" component={IngredientsList} />
+      <Stack.Screen name="screens/Questionnaire" component={Questionnaire} />
       <Stack.Screen name="screens/Account" component={Account} />
     </Stack.Navigator>
   );
