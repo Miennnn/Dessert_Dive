@@ -49,17 +49,17 @@ const Buttons: React.FC<{ navigation: HomeScreenNavigationProp }> = ({ navigatio
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('screens/DessertsNearMe')}>
         <ThemedText style={styles.buttonText}>Desserts near me</ThemedText>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('screens/Recipes')}>
-        <ThemedText style={styles.buttonText}>Recipes</ThemedText>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('screens/Questionnaire')}>
+        <ThemedText style={styles.buttonText}>Questionnaire</ThemedText>
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('screens/IngredientsList')}>
         <ThemedText style={styles.buttonText}>Ingredients list</ThemedText>
       </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('screens/Recipes')}>
+        <ThemedText style={styles.buttonText}>Recipes</ThemedText>
+      </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('screens/Account')}>
         <ThemedText style={styles.buttonText}>Account</ThemedText>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('screens/Questionnaire')}>
-        <ThemedText style={styles.buttonText}>Questionnaire</ThemedText>
       </TouchableOpacity>
     </ThemedView>
   );
