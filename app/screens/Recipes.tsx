@@ -6,28 +6,18 @@ type Recipe = {
   id: number;
   name: string;
   ingredients: string[];
-  instructions: string;
+  instructions: string[];
 };
 
 const recipes: Recipe[] = [
-  {
-    id: 1,
-    name: 'Spaghetti Carbonara',
-    ingredients: ['Spaghetti', 'Eggs', 'Parmesan cheese', 'Pancetta', 'Pepper'],
-    instructions: '1. Cook spaghetti. 2. Mix eggs and cheese. 3. Fry pancetta. 4. Combine all with pepper.',
-  },
-  {
-    id: 2,
-    name: 'Chicken Curry',
-    ingredients: ['Chicken', 'Curry powder', 'Coconut milk', 'Onion', 'Garlic', 'Ginger'],
-    instructions: '1. Sauté onion, garlic, and ginger. 2. Add chicken and curry powder. 3. Add coconut milk and simmer.',
-  },
-  {
-    id: 3,
-    name: 'Chocolate Cake',
-    ingredients: ['Flour', 'Sugar', 'Cocoa powder', 'Baking powder', 'Eggs', 'Milk', 'Butter'],
-    instructions: '1. Mix dry ingredients. 2. Add wet ingredients. 3. Bake at 350°F for 30 minutes.',
-  },
+  { id:1, name: 'Rum Baba', ingredients: ['1 cup flour', '2 tablespoons sugar', '1/2 teaspoon salt', '1 package active dry yeast', '1/4 cup warm milk', '2 eggs', '1/4 cup melted butter', '1/2 cup dark rum', '1/2 cup water', '1/2 cup sugar'], instructions: ['Preheat oven to 375°F (190°C).', 'Mix flour, sugar, salt, and yeast in a bowl.', 'Add warm milk, eggs, and melted butter. Mix until smooth.', 'Let the dough rise for about an hour.', 'Divide dough into greased muffin tins and bake for 15-20 minutes.', 'Combine rum, water, and sugar in a saucepan. Boil until syrupy.', 'Soak the baked babas in the rum syrup.'] },
+  { id:2, name: 'Bread Pudding', ingredients: ['4 cups cubed bread', '2 cups milk', '1/4 cup butter', '1/2 cup sugar', '2 eggs', '1 teaspoon vanilla extract', '1/2 teaspoon ground cinnamon', '1/4 teaspoon salt'], instructions: ['Preheat oven to 350°F (175°C).', 'In a saucepan, heat milk and butter until butter melts.', 'In a bowl, mix sugar, eggs, vanilla, cinnamon, and salt.', 'Add warm milk mixture to the bowl.', 'Place bread cubes in a greased baking dish.', 'Pour mixture over the bread cubes.', 'Bake for 45-50 minutes until set.'] },
+  { id:3, name: 'Molten Chocolate Cake', ingredients: ['1/2 cup unsalted butter', '4 oz bittersweet chocolate', '2 eggs', '2 egg yolks', '1/4 cup sugar', '2 tablespoons flour'], instructions: ['Preheat oven to 450°F (230°C).', 'Melt butter and chocolate in a bowl over simmering water.', 'In another bowl, beat eggs, egg yolks, and sugar until light and thick.', 'Fold chocolate mixture into egg mixture.', 'Add flour and mix gently.', 'Pour batter into greased ramekins.', 'Bake for 10-12 minutes until edges are set but center is soft.'] },
+  { id:4, name: 'Hot Toddy Bread Pudding', ingredients: ['4 cups cubed bread', '2 cups milk', '1/4 cup butter', '1/2 cup sugar', '2 eggs', '1 teaspoon vanilla extract', '1/4 cup bourbon', '1/4 teaspoon nutmeg', '1/4 teaspoon salt'], instructions: ['Preheat oven to 350°F (175°C).', 'Heat milk and butter until butter melts.', 'Mix sugar, eggs, vanilla, bourbon, nutmeg, and salt.', 'Add warm milk mixture to the bowl.', 'Place bread cubes in a greased baking dish.', 'Pour mixture over the bread cubes.', 'Bake for 45-50 minutes until set.'] },
+  { id:5, name: 'Savory Gin and Tonic Sorbet', ingredients: ['1 cup tonic water', '1/2 cup gin', '1/2 cup sugar', '1/4 cup lime juice', '1 tablespoon grated cucumber'], instructions: ['Combine tonic water, gin, sugar, lime juice, and cucumber.', 'Stir until sugar dissolves.', 'Freeze mixture in an ice cream maker according to manufacturer\'s instructions.'] },
+  { id:6, name: 'Gazpacho Sorbet', ingredients: ['2 cups tomato juice', '1/2 cup cucumber, diced', '1/4 cup red bell pepper, diced', '1/4 cup onion, diced', '2 tablespoons olive oil', '2 tablespoons lemon juice', '1 clove garlic, minced', 'Salt and pepper to taste'], instructions: ['Combine all ingredients in a blender and puree until smooth.', 'Freeze mixture in an ice cream maker according to manufacturer\'s instructions.'] },
+  { id:7, name: 'Boozy Ice Cream', ingredients: ['2 cups heavy cream', '1 cup milk', '3/4 cup sugar', '1/4 cup liquor of choice (e.g., bourbon, rum)', '1 teaspoon vanilla extract'], instructions: ['Mix cream, milk, sugar, liquor, and vanilla in a bowl.', 'Stir until sugar dissolves.', 'Freeze mixture in an ice cream maker according to manufacturer\'s instructions.'] },
+  { id:8, name: 'Strawberry Pudding', ingredients: ['2 cups fresh strawberries, hulled and sliced', '1/2 cup sugar', '2 cups milk', '1/4 cup cornstarch', '1 teaspoon vanilla extract'], instructions: ['Puree strawberries and sugar in a blender.', 'In a saucepan, heat milk and cornstarch until thickened.', 'Add strawberry puree and vanilla to the saucepan.', 'Cook until mixture thickens.', 'Pour into serving dishes and chill before serving.'] },
 ];
 
 const Recipes: React.FC = () => {
