@@ -1,18 +1,6 @@
 ## Dessert Dive
 Dessert Dive is a React Native application designed to help users find desserts near them, explore recipes, manage an ingredients list, and handle their account information.
 
-# Table of Contents
-Installation
-Usage
-Project Structure
-Navigation
-Screens
-Components
-Contributing
-License
-Installation
-Prerequisites
-
 # Before you begin, ensure you have met the following requirements:
 
 You have installed Node.js and npm.
@@ -46,6 +34,7 @@ app/
     HomeScreen.tsx
     IngredientsList.tsx
     Recipes.tsx
+    Questionnaire.tsx
 components/
   ParallaxScrollView.tsx
   ThemedComponents.tsx
@@ -67,6 +56,7 @@ Desserts Near Me: Displays desserts available near the user.
 Recipes: Shows a list of dessert recipes.
 Ingredients List: Manages the user's ingredients list.
 Account: Handles user account information.
+Questionnaire: Allows users to select their options and get back a recommendation
 
 # Screens
 HomeScreen.tsx
@@ -83,3 +73,6 @@ Manages the user's ingredients list.
 
 Account.tsx
 Handles user account information.
+
+Questionnaire.tsx
+Handles users options as well as prompting the recommendation
