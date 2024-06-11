@@ -11,7 +11,8 @@
       "backgroundColor": "#ffffff"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/3b5482f0-e375-4188-a0e0-6a8bbba15259"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -35,8 +36,12 @@
     },
     "extra": {
       "eas": {
-        "projectId": "f6cee06a-ac84-4e36-9e0b-d41a5c298cf"
+        "projectId": "3b5482f0-e375-4188-a0e0-6a8bbba15259"
       }
+    },
+    "owner": "miennn",
+    "runtimeVersion": {
+      "policy": "appVersion"
     }
   }
 }
