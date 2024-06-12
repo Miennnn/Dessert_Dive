@@ -31,17 +31,6 @@ const Title: React.FC = () => {
   );
 };
 
-const Preferences: React.FC<{ preferences: any }> = ({ preferences }) => {
-  if (!preferences) return null;
-
-  return (
-    <ThemedView style={styles.preferencesContainer}>
-      <ThemedText style={styles.preferenceText}>Name: {preferences.name}</ThemedText>
-      <ThemedText style={styles.preferenceText}>Favorite Dessert: {preferences.favoriteDessert}</ThemedText>
-      <ThemedText style={styles.preferenceText}>Comments: {preferences.comments}</ThemedText>
-    </ThemedView>
-  );
-};
 
 const Buttons: React.FC<{ navigation: HomeScreenNavigationProp }> = ({ navigation }) => {
   return (
