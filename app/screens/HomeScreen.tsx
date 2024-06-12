@@ -1,10 +1,18 @@
 import React from 'react';
 import { Image, StyleSheet, TouchableOpacity } from 'react-native';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText} from '@/components/ThemedText';
+import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { StackNavigationProp } from '@react-navigation/stack';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
+
+// Import your other screens here
+import DessertsNearMe from './DessertsNearMe';
+import Questionnaire from './Questionnaire';
+import IngredientsList from './IngredientsList';
+import Recipes from './Recipes';
+import Account from './Account';
 
 type RootStackParamList = {
   HomeScreen: { preferences?: any };
@@ -31,34 +39,22 @@ const Title: React.FC = () => {
   );
 };
 
-const Preferences: React.FC<{ preferences: any }> = ({ preferences }) => {
-  if (!preferences) return null;
-
-  return (
-    <ThemedView style={styles.preferencesContainer}>
-      <ThemedText style={styles.preferenceText}>Name: {preferences.name}</ThemedText>
-      <ThemedText style={styles.preferenceText}>Favorite Dessert: {preferences.favoriteDessert}</ThemedText>
-      <ThemedText style={styles.preferenceText}>Comments: {preferences.comments}</ThemedText>
-    </ThemedView>
-  );
-};
-
 const Buttons: React.FC<{ navigation: HomeScreenNavigationProp }> = ({ navigation }) => {
   return (
     <ThemedView style={styles.buttonContainer}>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('screens/DessertsNearMe')}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('DessertsNearMe')}>
         <ThemedText style={styles.buttonText}>Desserts near me</ThemedText>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('screens/Questionnaire')}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Questionnaire')}>
         <ThemedText style={styles.buttonText}>Questionnaire</ThemedText>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('screens/IngredientsList')}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('IngredientsList')}>
         <ThemedText style={styles.buttonText}>Ingredients list</ThemedText>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('screens/Recipes')}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Recipes')}>
         <ThemedText style={styles.buttonText}>Recipes</ThemedText>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('screens/Account')}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Account')}>
         <ThemedText style={styles.buttonText}>Account</ThemedText>
       </TouchableOpacity>
     </ThemedView>
@@ -82,6 +78,23 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       </ThemedView>
       <Buttons navigation={navigation} />
     </ParallaxScrollView>
+  );
+};
+
+const Stack = createStackNavigator<RootStackParamList>();
+
+const App: React.FC = () => {
+  return (
+    <NavigationContainer independent={true}>
+      <Stack.Navigator initialRouteName="HomeScreen">
+        <Stack.Screen name="HomeScreen" component={HomeScreen} />
+        <Stack.Screen name="DessertsNearMe" component={DessertsNearMe} />
+        <Stack.Screen name="Questionnaire" component={Questionnaire} />
+        <Stack.Screen name="IngredientsList" component={IngredientsList} />
+        <Stack.Screen name="Recipes" component={Recipes} />
+        <Stack.Screen name="Account" component={Account} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 
@@ -127,4 +140,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default App;

@@ -1,33 +1,38 @@
 import * as React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { User, onAuthStateChanged } from 'firebase/auth';
+import { FIREBASE_AUTH } from '@/FirebaseConfig';
 import HomeScreen from './screens/HomeScreen';
-import DessertsNearMe from './screens/DessertsNearMe';
-import Recipes from './screens/Recipes';
-import IngredientsList from './screens/IngredientsList';
-import Questionnaire from './screens/Questionnaire';
-import Account from './screens/Account';
+import Login from './screens/Login';
+import { NavigationContainer } from '@react-navigation/native';
+import { useEffect, useState } from 'react';
 
-type RootStackParamList = {
-  HomeScreen: undefined;
-  DessertsNearMe: undefined;
-  Recipes: undefined;
-  IngredientsList: undefined;
-  Questionnaire: undefined;
-  Account: undefined;
-};
-
-const Stack = createStackNavigator<RootStackParamList>();
 
 function Layout() {
+
+  const OuterStack = createNativeStackNavigator();
+
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    onAuthStateChanged(FIREBASE_AUTH, (user) => {
+      console.log('user', user);
+      setUser(user);
+    });
+  }, []);
+
+
   return (
-    <Stack.Navigator initialRouteName="screens/HomeScreen">
-      <Stack.Screen name="screens/HomeScreen" component={HomeScreen} />
-      <Stack.Screen name="screens/DessertsNearMe" component={DessertsNearMe} />
-      <Stack.Screen name="screens/Recipes" component={Recipes} />
-      <Stack.Screen name="screens/IngredientsList" component={IngredientsList} />
-      <Stack.Screen name="screens/Questionnaire" component={Questionnaire} />
-      <Stack.Screen name="screens/Account" component={Account} />
-    </Stack.Navigator>
+    <NavigationContainer independent={true}>
+      <OuterStack.Navigator initialRouteName="Login">
+          {user ?  (
+            <OuterStack.Screen name="HomeScreen" component={HomeScreen} options={{headerShown: false}} />
+          ) : (
+            <OuterStack.Screen name="Login" component={Login} />
+          )
+          }
+      </OuterStack.Navigator>
+    </NavigationContainer>
   );
 }
 
