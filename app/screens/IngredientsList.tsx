@@ -1,73 +1,52 @@
-// app/screens/DessertsNearMe.tsx
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Modal, ScrollView } from 'react-native';
+import { FIRESTORE_DB } from '@/FirebaseConfig'; 
+import { collection, getDocs } from "firebase/firestore"; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const IngredientsList: React.FC = () => {
   const [ingredients, setIngredients] = useState<string[]>([]);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [recipes, setRecipes] = useState<any[]>([]);
 
-  const allPredefinedIngredients = ['Baking Powder', 'Baking Soda', 'Bread', 'Butter', 'Chocolate', 'Cinnamon', 'Cornstarch', 
-  'Cucumber', 'Egg', 'Eggs', 'Flour', 'Garlic', 'Gin', 'Heavy cream', 'Honey', 'Lemon juice', 
-  'Lime juice', 'Milk', 'Nutmeg', 'Olive oil', 'Onion', 'Red bell pepper', 'Rum', 'Salt', 
-  'Strawberry', 'Sugar', 'Tonic water', 'Tomato juice', 'Vanilla Extract', 'Yeast'];
-  
-  const recipes = [
-    {
-      name: 'Rum Baba',
-      ingredients: ['Flour', 'Sugar', 'Salt', 'Yeast', 'Milk', 'Eggs', 'Butter', 'Rum']
-    },
-    {
-      name: 'Bread Pudding',
-      ingredients: ['Bread', 'Milk', 'Butter', 'Sugar', 'Vanilla Extract', 'Cinnamon', 'Salt']
-    },
-    {
-      name: 'Molten Chocolate Cake',
-      ingredients: ['Butter', 'Chocolate', 'Egg', 'Sugar', 'Flour']
-    },
-    {
-      name: 'Hot Toddy Bread Pudding',
-      ingredients: ['Bread', 'Milk', 'Butter', 'Sugar', 'Egg', 'Vanilla Extract', 'Bourbon', 'Nutmeg', 'Salt']
-    },
-    {
-      name: 'Savory Gin and Tonic Sorbet',
-      ingredients: ['Tonic water', 'Gin', 'Sugar', 'Lime juice', 'Cucumber']
-    },
-    {
-      name: 'Gazpacho Sorbet',
-      ingredients: ['Tomato juice', 'Cucumber', 'Red bell pepper', 'Onion', 'Olive oil', 'Lemon juice', 'Garlic', 'Salt']
-    },
-    {
-      name: 'Boozy Ice Cream',
-      ingredients: ['Heavy cream', 'Milk', 'Sugar', 'Bourbon', 'Rum', 'Vanilla extract']
-    },
-    {
-      name: 'Strawberry Pudding',
-      ingredients: ['Strawberry', 'Sugar', 'Milk', 'Cornstarch', 'Vanilla extract']
-    }
+  const allPredefinedIngredients = [
+    'Baking Powder', 'Baking Soda', 'Bourbon', 'Bread', 'Butter', 'Chocolate', 'Cinnamon', 'Cornstarch',
+    'Cucumber', 'Egg', 'Eggs', 'Flour', 'Garlic', 'Gin', 'Heavy Cream', 'Honey', 'Lemon Juice',
+    'Lime Juice', 'Milk', 'Nutmeg', 'Olive Oil', 'Onion', 'Red Bell Pepper', 'Rum', 'Salt',
+    'Strawberry', 'Sugar', 'Tonic Water', 'Tomato Juice', 'Vanilla Extract', 'Yeast'
   ];
 
   useEffect(() => {
     loadIngredients();
+    fetchRecipes();
   }, []);
 
   const loadIngredients = async () => {
-    try {
-      const storedIngredients = await AsyncStorage.getItem('ingredients');
-      if (storedIngredients !== null) {
-        setIngredients(JSON.parse(storedIngredients));
-      }
-    } catch (error) {
-      console.error('Failed to load ingredients from storage', error);
+    const storedIngredients = await AsyncStorage.getItem('ingredients');
+    if (storedIngredients !== null) {
+      setIngredients(JSON.parse(storedIngredients));
     }
   };
 
+  const fetchRecipes = async () => {
+    console.log('Fetching recipes from Firestore...');
+    const recipesCollection = collection(FIRESTORE_DB, 'Recipes');
+    const recipesSnapshot = await getDocs(recipesCollection);
+    const recipesData = recipesSnapshot.docs.map(doc => {
+      console.log('Document data:', doc.data());
+      return {
+        id: doc.id,
+        name: doc.data().Name,
+        ingredients: doc.data().Ingredients,
+        instructions: doc.data().Instructions
+      };
+    });
+    console.log('Fetched recipes from Firestore:', recipesData); // Debug log
+    setRecipes(recipesData);
+  };
+
   const saveIngredients = async (newIngredients: string[]) => {
-    try {
-      await AsyncStorage.setItem('ingredients', JSON.stringify(newIngredients));
-    } catch (error) {
-      console.error('Failed to save ingredients to storage', error);
-    }
+    await AsyncStorage.setItem('ingredients', JSON.stringify(newIngredients));
   };
 
   const handlePredefinedIngredientSelect = (selectedIngredient: string) => {
@@ -91,9 +70,12 @@ const IngredientsList: React.FC = () => {
     if (ingredients.length === 0) {
       return [];
     }
-    return recipes.filter(recipe => 
-      ingredients.every(ingredient => recipe.ingredients.includes(ingredient))
+    const availableRecipes = recipes.filter(recipe =>
+      Array.isArray(recipe.ingredients) && recipe.ingredients.every((ingredient: string) => ingredients.includes(ingredient))
     );
+    console.log('Ingredients: ', ingredients);
+    console.log('Filtered available recipes:', availableRecipes);
+    return availableRecipes;
   };
 
   return (
@@ -124,6 +106,7 @@ const IngredientsList: React.FC = () => {
         renderItem={({ item }) => (
           <View style={styles.recipeContainer}>
             <Text style={styles.recipe}>{item.name}</Text>
+            <Text style={styles.recipeInstructions}>{item.instructions}</Text>
           </View>
         )}
       />
@@ -213,6 +196,10 @@ const styles = StyleSheet.create({
   },
   recipe: {
     fontSize: 18,
+    fontWeight: 'bold',
+  },
+  recipeInstructions: {
+    fontSize: 14,
   },
   modalContainer: {
     flex: 1,

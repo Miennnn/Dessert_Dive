@@ -1,13 +1,10 @@
 import React from 'react';
-import { Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { Image, StyleSheet, TouchableOpacity, View, Text } from 'react-native';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 
-// Import your other screens here
 import DessertsNearMe from './DessertsNearMe';
 import Questionnaire from './Questionnaire';
 import IngredientsList from './IngredientsList';
@@ -33,38 +30,38 @@ type Props = {
 
 const Title: React.FC = () => {
   return (
-    <ThemedView style={styles.titleContainer}>
-      <ThemedText type="title">Dessert Dive</ThemedText>
-    </ThemedView>
+    <View style={styles.titleContainer}>
+      <Text style={styles.titleText}>Welcome to Dessert Dive</Text>
+    </View>
   );
 };
 
 const Buttons: React.FC<{ navigation: HomeScreenNavigationProp }> = ({ navigation }) => {
   return (
-    <ThemedView style={styles.buttonContainer}>
+    <View style={styles.buttonContainer}>
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('DessertsNearMe')}>
-        <ThemedText style={styles.buttonText}>Desserts near me</ThemedText>
+        <Text style={styles.buttonText}>Desserts near me</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Questionnaire')}>
-        <ThemedText style={styles.buttonText}>Questionnaire</ThemedText>
+        <Text style={styles.buttonText}>Questionnaire</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('IngredientsList')}>
-        <ThemedText style={styles.buttonText}>Ingredients list</ThemedText>
+        <Text style={styles.buttonText}>Ingredients list</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Recipes')}>
-        <ThemedText style={styles.buttonText}>Recipes</ThemedText>
+        <Text style={styles.buttonText}>Recipes</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Account')}>
-        <ThemedText style={styles.buttonText}>Account</ThemedText>
+        <Text style={styles.buttonText}>Account</Text>
       </TouchableOpacity>
-    </ThemedView>
+    </View>
   );
 };
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
+      headerBackgroundColor={{ light: '#FFDDDD', dark: '#FFDDDD' }}
       headerImage={
         <Image
           source={require('@/assets/images/Cookies_and_Coffee.png')}
@@ -72,11 +69,14 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         />
       }
     >
-      <Title />
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">What would you like to do today?</ThemedText>
-      </ThemedView>
-      <Buttons navigation={navigation} />
+      <View style={styles.container}>
+        <Title />
+        <View style={styles.stepContainer}>
+        <Text style={styles.subtitle}></Text>
+          <Text style={styles.subtitle}>What would you like to do today?</Text>
+        </View>
+        <Buttons navigation={navigation} />
+      </View>
     </ParallaxScrollView>
   );
 };
@@ -99,6 +99,10 @@ const App: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FFDDDD',
+  },
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -106,11 +110,20 @@ const styles = StyleSheet.create({
     gap: 8,
     marginTop: 20,
   },
+  titleText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: 'black',
+  },
   stepContainer: {
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
     marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 18,
+    color: 'black',
   },
   buttonContainer: {
     flex: 1,
@@ -126,6 +139,8 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     width: '80%',
     alignItems: 'center',
+    borderWidth: 2, 
+    borderColor: 'black', 
   },
   buttonText: {
     fontSize: 16,

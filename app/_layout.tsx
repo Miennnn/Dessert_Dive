@@ -28,7 +28,7 @@ function Layout() {
           {user ?  (
             <OuterStack.Screen name="HomeScreen" component={HomeScreen} options={{headerShown: false}} />
           ) : (
-            <OuterStack.Screen name="Login" component={Login} />
+            <OuterStack.Screen name="Login" component={Login} options={{headerShown: false}}/>
           )
           }
       </OuterStack.Navigator>

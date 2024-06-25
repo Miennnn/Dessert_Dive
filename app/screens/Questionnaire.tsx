@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { useNavigation } from '@react-navigation/native';
 
 const Questionnaire: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [temperature, setTemperature] = useState('');
@@ -93,12 +90,12 @@ const Questionnaire: React.FC<{ navigation: any }> = ({ navigation }) => {
       </View>
 
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-        <Text style={styles.submitButtonText}>Submit</Text>
+        <Text style={styles.submitButtonText}>Recommend</Text>
       </TouchableOpacity>
 
       {dessert ? (
         <View style={styles.resultContainer}>
-          <Text style={styles.label}>Recommended Dessert: {dessert}</Text>
+          <Text style={styles.label}>Recommended Dessert: <Text style={styles.boldText}>{dessert}</Text></Text>
         </View>
       ) : null}
     </View>
@@ -109,23 +106,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
     padding: 16,
-    backgroundColor: '#FFDDDD ', 
+    backgroundColor: '#FFDDDD',
   },
   title: {
     fontSize: 24,
-    textAlign: 'center',
+    fontWeight: 'bold',
     marginBottom: 16,
-    color: 'black', 
   },
   questionContainer: {
     marginBottom: 16,
+    width: '100%',
   },
   label: {
     fontSize: 16,
     marginBottom: 8,
     textAlign: 'center',
-    color: 'black', 
   },
   buttonGroup: {
     flexDirection: 'row',
@@ -133,11 +130,11 @@ const styles = StyleSheet.create({
   },
   optionButton: {
     flex: 1,
+    borderRadius: 20,
     marginHorizontal: 8,
     paddingVertical: 12,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: 'black',
     backgroundColor: 'white',
     alignItems: 'center',
   },
@@ -150,9 +147,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   submitButton: {
-    backgroundColor: '#FFB6C1', 
-    padding: 8, 
+    backgroundColor: '#FFB6C1',
+    padding: 8,
     borderRadius: 4,
+    borderWidth: 2,
     alignItems: 'center',
     marginTop: 16,
   },
@@ -165,6 +163,10 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#f8f8f8',
     borderRadius: 4,
+    alignItems: 'center',
+  },
+  boldText: {
+    fontWeight: 'bold',
   },
 });
 
