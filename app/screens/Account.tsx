@@ -38,7 +38,7 @@ const Account: React.FC = () => {
         onChangeText={setUsername}
       />
       <Button title="Save Username" onPress={saveUsername} />
-      {username ? <Text style={styles.username}>Username: hello <Text style={styles.boldText}>{username}</Text></Text> : null}
+      {username ? <Text style={styles.username}>Username: <Text style={styles.boldText}>{username}</Text></Text> : null}
     </View>
   );
 };
