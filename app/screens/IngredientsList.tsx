@@ -71,7 +71,7 @@ const IngredientsList: React.FC = () => {
       return [];
     }
     const availableRecipes = recipes.filter(recipe =>
-      Array.isArray(recipe.ingredients) && recipe.ingredients.every((ingredient: string) => ingredients.includes(ingredient))
+      Array.isArray(recipe.ingredients) && ingredients.every(ingredient => recipe.ingredients.includes(ingredient))
     );
     console.log('Ingredients: ', ingredients);
     console.log('Filtered available recipes:', availableRecipes);
