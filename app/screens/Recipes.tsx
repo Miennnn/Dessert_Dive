@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, TextInput, Modal, Button } from 'react-native';
 import { FIRESTORE_DB } from '@/FirebaseConfig'; 
 import { collection, getDocs, updateDoc, doc } from "firebase/firestore"; 
 import { FontAwesome } from '@expo/vector-icons'; // Make sure to install @expo/vector-icons
@@ -8,13 +8,16 @@ interface Recipe {
   id: string;
   name: string;
   ingredients: string[];
-  instructions: string;
+  instructions: string[];
   isFavorite: boolean;
 }
 
 const Recipes: React.FC = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
   useEffect(() => {
     fetchRecipes();
@@ -33,10 +36,12 @@ const Recipes: React.FC = () => {
     }));
     console.log('Fetched recipes from Firestore:', recipesData); // Debug log
     setRecipes(recipesData);
+    setFilteredRecipes(recipesData); // Set filtered recipes initially
   };
 
   const handleRecipePress = (recipe: Recipe) => {
     setSelectedRecipe(recipe);
+    setIsModalVisible(true);
   };
 
   const toggleFavorite = async (recipeId: string) => {
@@ -49,6 +54,7 @@ const Recipes: React.FC = () => {
       return recipe;
     });
     setRecipes(updatedRecipes);
+    setFilteredRecipes(updatedRecipes); // Update filtered recipes
   };
 
   const updateFavoriteStatus = async (recipeId: string, isFavorite: boolean) => {
@@ -56,11 +62,34 @@ const Recipes: React.FC = () => {
     await updateDoc(recipeDocRef, { isFavorite });
   };
 
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    if (query.trim() === '') {
+      setFilteredRecipes(recipes);
+    } else {
+      const filtered = recipes.filter(recipe => 
+        recipe.name.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredRecipes(filtered);
+    }
+  };
+
+  const closeModal = () => {
+    setIsModalVisible(false);
+    setSelectedRecipe(null);
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Recipes</Text>
+      <TextInput
+        style={styles.searchBar}
+        placeholder="Search Recipes..."
+        value={searchQuery}
+        onChangeText={handleSearch}
+      />
       <FlatList
-        data={recipes}
+        data={filteredRecipes}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.recipeItemContainer}>
@@ -78,15 +107,24 @@ const Recipes: React.FC = () => {
         )}
       />
       {selectedRecipe && (
-        <View style={styles.details}>
-          <Text style={styles.recipeTitle}>{selectedRecipe.name}</Text>
-          <Text style={styles.subTitle}>Ingredients:</Text>
-          {selectedRecipe.ingredients.map((ingredient, index) => (
-            <Text key={index} style={styles.ingredient}>{ingredient}</Text>
-          ))}
-          <Text style={styles.subTitle}>Instructions:</Text>
-          <Text style={styles.instructions}>{selectedRecipe.instructions}</Text>
-        </View>
+        <Modal
+          visible={isModalVisible}
+          animationType="slide"
+          onRequestClose={closeModal}
+        >
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>{selectedRecipe.name}</Text>
+            <Text style={styles.subTitle}>Ingredients:</Text>
+            {selectedRecipe.ingredients.map((ingredient, index) => (
+              <Text key={index} style={styles.ingredient}>{ingredient}</Text>
+            ))}
+            <Text style={styles.subTitle}>Instructions:</Text>
+            {selectedRecipe.instructions.map((instruction, index) => (
+              <Text key={index} style={styles.instruction}>{instruction}</Text>
+            ))}
+            <Button title="Close" onPress={closeModal} />
+          </View>
+        </Modal>
       )}
     </View>
   );
@@ -101,6 +139,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
+    marginBottom: 16,
+  },
+  searchBar: {
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 8,
     marginBottom: 16,
   },
   recipeItemContainer: {
@@ -137,9 +183,21 @@ const styles = StyleSheet.create({
   ingredient: {
     fontSize: 16,
   },
-  instructions: {
+  instruction: {
     fontSize: 16,
     marginTop: 4,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#FFDDDD',
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
   },
 });
 

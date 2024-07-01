@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, FlatList, TouchableOpacity, Modal } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FIRESTORE_DB } from '@/FirebaseConfig';
 import { collection, getDocs, query, where } from "firebase/firestore"; 
@@ -9,36 +9,46 @@ interface Recipe {
   id: string;
   name: string;
   ingredients: string[];
-  instructions: string;
+  instructions: string[];
   isFavorite: boolean;
 }
 
 const Account: React.FC = () => {
   const [username, setUsername] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
   const [favoriteRecipes, setFavoriteRecipes] = useState<Recipe[]>([]);
+  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
 
   useEffect(() => {
-    loadUsername();
+    loadProfileData();
     fetchFavoriteRecipes();
   }, []);
 
-  const loadUsername = async () => {
+  const loadProfileData = async () => {
     try {
       const storedUsername = await AsyncStorage.getItem('username');
+      const storedDescription = await AsyncStorage.getItem('description');
       if (storedUsername) {
         setUsername(storedUsername);
       }
+      if (storedDescription) {
+        setDescription(storedDescription);
+      }
     } catch (error) {
-      console.error('Failed to load username from storage', error);
+      console.error('Failed to load profile data from storage', error);
     }
   };
 
-  const saveUsername = async () => {
+  const saveProfileData = async () => {
     try {
       await AsyncStorage.setItem('username', username);
+      await AsyncStorage.setItem('description', description);
     } catch (error) {
-      console.error('Failed to save username to storage', error);
+      console.error('Failed to save profile data to storage', error);
     }
+    setIsEditing(false);
   };
 
   const fetchFavoriteRecipes = async () => {
@@ -57,28 +67,84 @@ const Account: React.FC = () => {
     setFavoriteRecipes(recipesData);
   };
 
+  const handleRecipePress = (recipe: Recipe) => {
+    setSelectedRecipe(recipe);
+    setIsModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setIsModalVisible(false);
+    setSelectedRecipe(null);
+  };
+
+  const toggleEditing = () => {
+    setIsEditing(!isEditing);
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Account</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter your username"
-        value={username}
-        onChangeText={setUsername}
-      />
-      <Button title="Save Username" onPress={saveUsername} />
-      {username ? <Text style={styles.username}>Username: <Text style={styles.boldText}>{username}</Text></Text> : null}
+      <View style={styles.profileContainer}>
+        {isEditing ? (
+          <>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter your username"
+              value={username}
+              onChangeText={setUsername}
+            />
+            <TextInput
+              style={[styles.input, { height: 80 }]}
+              placeholder="Enter your description"
+              value={description}
+              onChangeText={setDescription}
+              multiline
+            />
+            <Button title="Save" onPress={saveProfileData} />
+          </>
+        ) : (
+          <>
+            <Text style={styles.username}>{username}</Text>
+            <Text style={styles.description}>{description}</Text>
+            <TouchableOpacity onPress={toggleEditing} style={styles.editButton}>
+              <FontAwesome name="edit" size={24} color="black" />
+            </TouchableOpacity>
+          </>
+        )}
+      </View>
       <Text style={styles.subTitle}>Favorite Recipes:</Text>
       <FlatList
         data={favoriteRecipes}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={styles.recipeItemContainer}>
-            <Text style={styles.recipeName}>{item.name}</Text>
-          </View>
+          <TouchableOpacity onPress={() => handleRecipePress(item)}>
+            <View style={styles.recipeItemContainer}>
+              <Text style={styles.recipeName}>{item.name}</Text>
+            </View>
+          </TouchableOpacity>
         )}
         ListEmptyComponent={<Text style={styles.emptyText}>No favorite recipes</Text>}
       />
+
+      {selectedRecipe && (
+        <Modal
+          visible={isModalVisible}
+          animationType="slide"
+          onRequestClose={closeModal}
+        >
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>{selectedRecipe.name}</Text>
+            <Text style={styles.subTitle}>Ingredients:</Text>
+            {selectedRecipe.ingredients.map((ingredient, index) => (
+              <Text key={index} style={styles.ingredient}>{ingredient}</Text>
+            ))}
+            <Text style={styles.subTitle}>Instructions:</Text>
+            {selectedRecipe.instructions.map((instruction, index) => (
+              <Text key={index} style={styles.instruction}>{instruction}</Text>
+            ))}
+            <Button title="Close" onPress={closeModal} />
+          </View>
+        </Modal>
+      )}
     </View>
   );
 };
@@ -91,9 +157,8 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#FFDDDD',
   },
-  text: {
-    fontSize: 24,
-    fontWeight: 'bold',
+  profileContainer: {
+    alignItems: 'center',
     marginBottom: 16,
   },
   input: {
@@ -105,11 +170,20 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   username: {
-    marginTop: 16,
-    fontSize: 18,
-  },
-  boldText: {
+    fontSize: 24,
     fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  description: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  editButton: {
+    position: 'absolute',
+    top: 0,
+    right: -100,
+    padding: 10,
   },
   subTitle: {
     fontSize: 20,
@@ -133,6 +207,18 @@ const styles = StyleSheet.create({
     color: 'gray',
     textAlign: 'center',
     marginTop: 16,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#FFDDDD',
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
   },
 });
 

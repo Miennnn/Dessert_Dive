@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView } from 'react-native';
+import { FIRESTORE_DB } from '@/FirebaseConfig';
+import { collection, getDocs } from "firebase/firestore";
 
 const Questionnaire: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [temperature, setTemperature] = useState('');
   const [flavor, setFlavor] = useState('');
   const [alcohol, setAlcohol] = useState('');
-  const [dessert, setDessert] = useState('');
+  const [recommendedRecipe, setRecommendedRecipe] = useState<any | null>(null);
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     let recommendedDessert = '';
 
     if (temperature === 'cold' && flavor === 'sweet' && alcohol === 'non-alcoholic') {
@@ -17,7 +20,7 @@ const Questionnaire: React.FC<{ navigation: any }> = ({ navigation }) => {
     } else if (temperature === 'cold' && flavor === 'savoury' && alcohol === 'non-alcoholic') {
       recommendedDessert = 'Gazpacho Sorbet';
     } else if (temperature === 'cold' && flavor === 'savoury' && alcohol === 'alcoholic') {
-      recommendedDessert = 'Savory Gin and Tonic Sorbet';
+      recommendedDessert = 'Gin and Tonic';
     } else if (temperature === 'hot' && flavor === 'sweet' && alcohol === 'alcoholic') {
       recommendedDessert = 'Rum Baba';
     } else if (temperature === 'hot' && flavor === 'sweet' && alcohol === 'non-alcoholic') {
@@ -28,7 +31,30 @@ const Questionnaire: React.FC<{ navigation: any }> = ({ navigation }) => {
       recommendedDessert = 'Hot Toddy Bread Pudding';
     }
 
-    setDessert(recommendedDessert);
+    if (recommendedDessert) {
+      const recipe = await fetchRecipeFromFirebase(recommendedDessert);
+      setRecommendedRecipe(recipe);
+    }
+  };
+
+  const fetchRecipeFromFirebase = async (recipeName: string) => {
+    console.log('Fetching recipe from Firestore...');
+    const recipesCollection = collection(FIRESTORE_DB, 'Recipes');
+    const recipesSnapshot = await getDocs(recipesCollection);
+    const recipesData = recipesSnapshot.docs.map(doc => ({
+      id: doc.id,
+      name: doc.data().Name,
+      ingredients: doc.data().Ingredients,
+      instructions: doc.data().Instructions
+    }));
+    const recipe = recipesData.find(recipe => recipe.name === recipeName);
+    console.log('Fetched recipe from Firestore:', recipe); // Debug log
+    return recipe;
+  };
+
+  const closeModal = () => {
+    setIsModalVisible(false);
+    setRecommendedRecipe(null);
   };
 
   return (
@@ -93,11 +119,36 @@ const Questionnaire: React.FC<{ navigation: any }> = ({ navigation }) => {
         <Text style={styles.submitButtonText}>Recommend</Text>
       </TouchableOpacity>
 
-      {dessert ? (
+      {recommendedRecipe && (
         <View style={styles.resultContainer}>
-          <Text style={styles.label}>Recommended Dessert: <Text style={styles.boldText}>{dessert}</Text></Text>
+          <TouchableOpacity onPress={() => setIsModalVisible(true)}>
+            <Text style={styles.label}>Recommended Dessert: <Text style={styles.boldText}>{recommendedRecipe.name}</Text></Text>
+          </TouchableOpacity>
         </View>
-      ) : null}
+      )}
+
+      {recommendedRecipe && (
+        <Modal
+          visible={isModalVisible}
+          animationType="slide"
+          onRequestClose={closeModal}
+        >
+          <ScrollView contentContainerStyle={styles.modalContainer}>
+            <Text style={styles.modalTitle}>{recommendedRecipe.name}</Text>
+            <Text style={styles.subTitle}>Ingredients:</Text>
+            {recommendedRecipe.ingredients.map((ingredient: string, index: number) => (
+              <Text key={index} style={styles.ingredient}>{ingredient}</Text>
+            ))}
+            <Text style={styles.subTitle}>Instructions:</Text>
+            {recommendedRecipe.instructions.map((instruction: string, index: number) => (
+              <Text key={index} style={styles.instruction}>{instruction}</Text>
+            ))}
+            <TouchableOpacity onPress={closeModal} style={styles.closeButton}>
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </ScrollView>
+        </Modal>
+      )}
     </View>
   );
 };
@@ -164,6 +215,33 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8f8f8',
     borderRadius: 4,
     alignItems: 'center',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#FFDDDD',
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+  },
+  subTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: 8,
+  },
+  closeButton: {
+    backgroundColor: '#FF4444',
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 20,
+  },
+  closeButtonText: {
+    color: '#FFF',
+    fontWeight: 'bold',
   },
   boldText: {
     fontWeight: 'bold',

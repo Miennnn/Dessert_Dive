@@ -8,13 +8,9 @@ const IngredientsList: React.FC = () => {
   const [ingredients, setIngredients] = useState<string[]>([]);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [recipes, setRecipes] = useState<any[]>([]);
-
-  const allPredefinedIngredients = [
-    'Baking Powder', 'Baking Soda', 'Bourbon', 'Bread', 'Butter', 'Chocolate', 'Cinnamon', 'Cornstarch',
-    'Cucumber', 'Egg', 'Eggs', 'Flour', 'Garlic', 'Gin', 'Heavy Cream', 'Honey', 'Lemon Juice',
-    'Lime Juice', 'Milk', 'Nutmeg', 'Olive Oil', 'Onion', 'Red Bell Pepper', 'Rum', 'Salt',
-    'Strawberry', 'Sugar', 'Tonic Water', 'Tomato Juice', 'Vanilla Extract', 'Yeast'
-  ];
+  const [allIngredients, setAllIngredients] = useState<string[]>([]);
+  const [selectedRecipe, setSelectedRecipe] = useState<any | null>(null);
+  const [isRecipeModalVisible, setIsRecipeModalVisible] = useState<boolean>(false);
 
   useEffect(() => {
     loadIngredients();
@@ -43,13 +39,22 @@ const IngredientsList: React.FC = () => {
     });
     console.log('Fetched recipes from Firestore:', recipesData); // Debug log
     setRecipes(recipesData);
+
+    // Compile all ingredients from the recipes into a list with no duplicates
+    const allIngredientsSet = new Set<string>();
+    recipesData.forEach(recipe => {
+      recipe.ingredients.forEach((ingredient: string) => {
+        allIngredientsSet.add(ingredient);
+      });
+    });
+    setAllIngredients(Array.from(allIngredientsSet));
   };
 
   const saveIngredients = async (newIngredients: string[]) => {
     await AsyncStorage.setItem('ingredients', JSON.stringify(newIngredients));
   };
 
-  const handlePredefinedIngredientSelect = (selectedIngredient: string) => {
+  const handleIngredientSelect = (selectedIngredient: string) => {
     const newIngredients = [...ingredients, selectedIngredient];
     setIngredients(newIngredients);
     saveIngredients(newIngredients);
@@ -62,9 +67,15 @@ const IngredientsList: React.FC = () => {
     saveIngredients(newIngredients);
   };
 
-  const filteredPredefinedIngredients = allPredefinedIngredients.filter(
-    (ingredient) => !ingredients.includes(ingredient)
-  );
+  const handleRecipePress = (recipe: any) => {
+    setSelectedRecipe(recipe);
+    setIsRecipeModalVisible(true);
+  };
+
+  const closeRecipeModal = () => {
+    setIsRecipeModalVisible(false);
+    setSelectedRecipe(null);
+  };
 
   const getAvailableRecipes = () => {
     if (ingredients.length === 0) {
@@ -102,12 +113,13 @@ const IngredientsList: React.FC = () => {
       <Text style={styles.subtitle}>Available Recipes:</Text>
       <FlatList
         data={getAvailableRecipes()}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={styles.recipeContainer}>
-            <Text style={styles.recipe}>{item.name}</Text>
-            <Text style={styles.recipeInstructions}>{item.instructions}</Text>
-          </View>
+          <TouchableOpacity onPress={() => handleRecipePress(item)}>
+            <View style={styles.recipeContainer}>
+              <Text style={styles.recipe}>{item.name}</Text>
+            </View>
+          </TouchableOpacity>
         )}
       />
       <Modal
@@ -119,19 +131,41 @@ const IngredientsList: React.FC = () => {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <ScrollView>
-              {filteredPredefinedIngredients.length > 0 ? (
-                filteredPredefinedIngredients.map((ingredient, index) => (
-                  <TouchableOpacity key={index} onPress={() => handlePredefinedIngredientSelect(ingredient)} style={styles.modalItem}>
+              {allIngredients.length > 0 ? (
+                allIngredients.map((ingredient, index) => (
+                  <TouchableOpacity key={index} onPress={() => handleIngredientSelect(ingredient)} style={styles.modalItem}>
                     <Text style={styles.modalItemText}>{ingredient}</Text>
                   </TouchableOpacity>
                 ))
               ) : (
-                <Text style={styles.noMoreIngredientsText}>No more ingredients available</Text>
+                <Text style={styles.noMoreIngredientsText}>No ingredients available</Text>
               )}
             </ScrollView>
           </View>
         </View>
       </Modal>
+      {selectedRecipe && (
+        <Modal
+          visible={isRecipeModalVisible}
+          animationType="slide"
+          onRequestClose={closeRecipeModal}
+        >
+          <View style={styles.recipeModalContainer}>
+            <Text style={styles.modalTitle}>{selectedRecipe.name}</Text>
+            <Text style={styles.subTitle}>Ingredients:</Text>
+            {selectedRecipe.ingredients.map((ingredient: string, index: number) => (
+              <Text key={index} style={styles.ingredient}>{ingredient}</Text>
+            ))}
+            <Text style={styles.subTitle}>Instructions:</Text>
+            {selectedRecipe.instructions.map((instruction: string, index: number) => (
+              <Text key={index} style={styles.instruction}>{instruction}</Text>
+            ))}
+            <TouchableOpacity onPress={closeRecipeModal} style={styles.closeButton}>
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
+      )}
     </View>
   );
 };
@@ -224,6 +258,28 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: 'center',
     color: '#999',
+  },
+  recipeModalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#FFDDDD',
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+  },
+  closeButton: {
+    backgroundColor: '#FF4444',
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 20,
+  },
+  closeButtonText: {
+    color: '#FFF',
+    fontWeight: 'bold',
   },
 });
 
