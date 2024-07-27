@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Dimensions } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import axios from 'axios';
-import { ThemedText} from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
 
 const { width, height } = Dimensions.get('window');
 

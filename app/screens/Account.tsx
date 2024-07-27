@@ -3,7 +3,7 @@ import { View, Text, TextInput, Button, StyleSheet, FlatList, TouchableOpacity, 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FIRESTORE_DB } from '@/FirebaseConfig';
 import { collection, getDocs, query, where } from "firebase/firestore"; 
-import { FontAwesome } from '@expo/vector-icons'; // Make sure to install @expo/vector-icons
+import { FontAwesome } from '@expo/vector-icons'; 
 
 interface Recipe {
   id: string;
@@ -63,7 +63,7 @@ const Account: React.FC = () => {
       instructions: doc.data().Instructions,
       isFavorite: doc.data().isFavorite || false,
     }));
-    console.log('Fetched favorite recipes from Firestore:', recipesData); // Debug log
+    console.log('Fetched favorite recipes from Firestore:', recipesData); 
     setFavoriteRecipes(recipesData);
   };
 
