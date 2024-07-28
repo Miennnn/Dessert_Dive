@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, TextInput, Modal, Button } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, TextInput, Modal, Button, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { FIRESTORE_DB } from '../../FirebaseConfig'; 
 import { collection, getDocs, updateDoc, doc } from "firebase/firestore"; 
 import { FontAwesome } from '@expo/vector-icons';
@@ -18,10 +18,28 @@ const Recipes: React.FC = () => {
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [inputMinutes, setInputMinutes] = useState<string>('0');
+  const [inputSeconds, setInputSeconds] = useState<string>('0');
+  const [remainingTime, setRemainingTime] = useState<number>(0);
+  const [isTimerRunning, setIsTimerRunning] = useState<boolean>(false);
+  const [isEditingTime, setIsEditingTime] = useState<boolean>(false);
 
   useEffect(() => {
     fetchRecipes();
   }, []);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isTimerRunning && remainingTime > 0) {
+      interval = setInterval(() => {
+        setRemainingTime(prevTime => prevTime - 1);
+      }, 1000);
+    } else if (remainingTime === 0) {
+      clearInterval(interval);
+      setIsTimerRunning(false);
+    }
+    return () => clearInterval(interval);
+  }, [isTimerRunning, remainingTime]);
 
   const fetchRecipes = async () => {
     console.log('Fetching recipes from Firestore...');
@@ -31,8 +49,8 @@ const Recipes: React.FC = () => {
       id: doc.id,
       name: doc.data().Name,
       ingredients: doc.data().Ingredients,
-      instructions: doc.data().Instructions,
-      isFavorite: doc.data().isFavorite || false, // Add a fallback for isFavorite
+      instructions: doc.data().Instructions.map((instruction: string) => ({ text: instruction, completed: false })),
+      isFavorite: doc.data().isFavorite || false,
     }));
     console.log('Fetched recipes from Firestore:', recipesData); // Debug log
     setRecipes(recipesData);
@@ -74,9 +92,34 @@ const Recipes: React.FC = () => {
     }
   };
 
+  const toggleInstructionCompletion = (index: number) => {
+    if (!selectedRecipe) return;
+    const updatedInstructions = selectedRecipe.instructions.map((instruction, i) => {
+      if (i === index) {
+        return { ...instruction, completed: !instruction.completed };
+      }
+      return instruction;
+    });
+    setSelectedRecipe({ ...selectedRecipe, instructions: updatedInstructions });
+  };
+
+  const handleStartTimer = () => {
+    const minutes = parseInt(inputMinutes) || 0;
+    const seconds = parseInt(inputSeconds) || 0;
+    const timeInSeconds = (minutes * 60) + seconds;
+    setRemainingTime(timeInSeconds);
+    setIsTimerRunning(true);
+    setIsEditingTime(false);
+  };
+
   const closeModal = () => {
     setIsModalVisible(false);
     setSelectedRecipe(null);
+    setIsTimerRunning(false);
+    setRemainingTime(0);
+    setInputMinutes('0');
+    setInputSeconds('0');
+    setIsEditingTime(false);
   };
 
   return (
@@ -112,7 +155,7 @@ const Recipes: React.FC = () => {
           animationType="slide"
           onRequestClose={closeModal}
         >
-          <View style={styles.modalContainer}>
+          <ScrollView contentContainerStyle={styles.modalContainer}>
             <Text style={styles.modalTitle}>{selectedRecipe.name}</Text>
             <Text style={styles.subTitle}>Ingredients:</Text>
             {selectedRecipe.ingredients.map((ingredient, index) => (
@@ -120,10 +163,38 @@ const Recipes: React.FC = () => {
             ))}
             <Text style={styles.subTitle}>Instructions:</Text>
             {selectedRecipe.instructions.map((instruction, index) => (
-              <Text key={index} style={styles.instruction}>{instruction}</Text>
+              <View key={index} style={styles.instructionContainer}>
+                <TouchableOpacity 
+                  style={[styles.checkbox, instruction.completed && styles.checkboxCompleted]}
+                  onPress={() => toggleInstructionCompletion(index)}
+                />
+                <Text style={styles.instruction}>{instruction.text}</Text>
+              </View>
             ))}
+            <View style={styles.timerContainer}>
+              <TextInput
+                style={styles.timerInput}
+                placeholder="Minutes"
+                keyboardType="numeric"
+                value={inputMinutes}
+                onFocus={() => setIsEditingTime(true)}
+                onChangeText={setInputMinutes}
+              />
+              <Text style={styles.timerLabel}>min</Text>
+              <TextInput
+                style={styles.timerInput}
+                placeholder="Seconds"
+                keyboardType="numeric"
+                value={inputSeconds}
+                onFocus={() => setIsEditingTime(true)}
+                onChangeText={setInputSeconds}
+              />
+              <Text style={styles.timerLabel}>sec</Text>
+              <Button title="Start Timer" onPress={handleStartTimer} />
+            </View>
+            <Text style={styles.timer}>Time remaining: {Math.floor(remainingTime / 60)}:{(remainingTime % 60).toString().padStart(2, '0')}</Text>
             <Button title="Close" onPress={closeModal} />
-          </View>
+          </ScrollView>
         </Modal>
       )}
     </View>
@@ -183,14 +254,42 @@ const styles = StyleSheet.create({
   ingredient: {
     fontSize: 16,
   },
+  instructionContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginTop: 8,
+  },
+  checkboxCompleted: {
+    backgroundColor: 'green',
+  },
   instruction: {
     fontSize: 16,
     marginTop: 4,
   },
+  timerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginVertical: 16,
+  },
+  timerInput: {
+    flex: 1,
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    marginRight: 8,
+  },
+  timerLabel: {
+    marginRight: 8,
+    fontSize: 16,
+  },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     padding: 16,
     backgroundColor: '#FFDDDD',
   },
@@ -198,6 +297,11 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 16,
+  },
+  timer: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: 16,
   },
 });
 

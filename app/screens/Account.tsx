@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, FlatList, TouchableOpacity, Modal } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, FlatList, TouchableOpacity, Modal, Image} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FIRESTORE_DB } from '../../FirebaseConfig';
 import { collection, getDocs, query, where } from "firebase/firestore"; 
@@ -83,6 +83,7 @@ const Account: React.FC = () => {
 
   return (
     <View style={styles.container}>
+      <Image source={require('../../assets/images/boozy ice cream.jpg')} style={styles.image} />
       <View style={styles.profileContainer}>
         {isEditing ? (
           <>
@@ -178,6 +179,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     marginBottom: 16,
+  },
+  image: {
+    width: '110%',
+    height: 300,
+    resizeMode: 'cover',
+    marginBottom: 10,
   },
   editButton: {
     position: 'absolute',

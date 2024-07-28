@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView, Image} from 'react-native';
 import { FIRESTORE_DB } from '../../FirebaseConfig';
 import { collection, getDocs } from "firebase/firestore";
 
@@ -59,6 +59,7 @@ const Questionnaire: React.FC<{ navigation: any }> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <Image source={require('../../assets/images/dessert.jpg')} style={styles.image} />
       <Text style={styles.title}>Dessert Preferences</Text>
 
       <View style={styles.questionContainer}>
@@ -160,6 +161,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     backgroundColor: '#FFDDDD',
+  },
+  image: {
+    width: '110%',
+    height: 300,
+    resizeMode: 'cover',
+    marginBottom: 10,
   },
   title: {
     fontSize: 24,
