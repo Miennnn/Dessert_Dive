@@ -1,6 +1,6 @@
 import React from 'react';
 import { Image, StyleSheet, TouchableOpacity, View, Text } from 'react-native';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
+import ParallaxScrollView from '../../components/ParallaxScrollView';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
@@ -64,7 +64,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       headerBackgroundColor={{ light: '#FFDDDD', dark: '#FFDDDD' }}
       headerImage={
         <Image
-          source={require('@/assets/images/Cookies_and_Coffee.png')}
+          source={require('../../assets/images/Cookies_and_Coffee.png')}
           style={styles.dessertDiveLogo}
         />
       }

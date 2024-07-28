@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, TextInput, Modal, Button } from 'react-native';
-import { FIRESTORE_DB } from '@/FirebaseConfig'; 
+import { FIRESTORE_DB } from '../../FirebaseConfig'; 
 import { collection, getDocs, updateDoc, doc } from "firebase/firestore"; 
-import { FontAwesome } from '@expo/vector-icons'; // Make sure to install @expo/vector-icons
+import { FontAwesome } from '@expo/vector-icons';
 
 interface Recipe {
   id: string;

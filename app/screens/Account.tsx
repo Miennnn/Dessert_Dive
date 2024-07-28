@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, FlatList, TouchableOpacity, Modal } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FIRESTORE_DB } from '@/FirebaseConfig';
+import { FIRESTORE_DB } from '../../FirebaseConfig';
 import { collection, getDocs, query, where } from "firebase/firestore"; 
 import { FontAwesome } from '@expo/vector-icons'; 
 

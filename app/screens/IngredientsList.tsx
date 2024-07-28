@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Modal, ScrollView } from 'react-native';
-import { FIRESTORE_DB } from '@/FirebaseConfig'; 
+import { FIRESTORE_DB } from '../../FirebaseConfig'; 
 import { collection, getDocs } from "firebase/firestore"; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 

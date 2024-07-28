@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView } from 'react-native';
-import { FIRESTORE_DB } from '@/FirebaseConfig';
+import { FIRESTORE_DB } from '../../FirebaseConfig';
 import { collection, getDocs } from "firebase/firestore";
 
 const Questionnaire: React.FC<{ navigation: any }> = ({ navigation }) => {
