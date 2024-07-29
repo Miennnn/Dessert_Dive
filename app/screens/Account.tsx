@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, FlatList, TouchableOpacity, Modal, Image} from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, FlatList, TouchableOpacity, Modal, ImageBackground } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FIRESTORE_DB } from '../../FirebaseConfig';
 import { collection, getDocs, query, where } from "firebase/firestore"; 
@@ -82,71 +82,72 @@ const Account: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Image source={require('../../assets/images/boozy ice cream.jpg')} style={styles.image} />
-      <View style={styles.profileContainer}>
-        {isEditing ? (
-          <>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter your username"
-              value={username}
-              onChangeText={setUsername}
-            />
-            <TextInput
-              style={[styles.input, { height: 80 }]}
-              placeholder="Enter your description"
-              value={description}
-              onChangeText={setDescription}
-              multiline
-            />
-            <Button title="Save" onPress={saveProfileData} />
-          </>
-        ) : (
-          <>
-            <Text style={styles.username}>{username}</Text>
-            <Text style={styles.description}>{description}</Text>
-            <TouchableOpacity onPress={toggleEditing} style={styles.editButton}>
-              <FontAwesome name="edit" size={24} color="black" />
+    <ImageBackground source={require('../../assets/images/account_background.jpg')} style={styles.backgroundImage}>
+      <View style={styles.container}>
+        <View style={styles.profileContainer}>
+          {isEditing ? (
+            <>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter your username"
+                value={username}
+                onChangeText={setUsername}
+              />
+              <TextInput
+                style={[styles.input, { height: 80 }]}
+                placeholder="Enter your description"
+                value={description}
+                onChangeText={setDescription}
+                multiline
+              />
+              <Button title="Save" onPress={saveProfileData} />
+            </>
+          ) : (
+            <>
+              <Text style={styles.username}>{username}</Text>
+              <Text style={styles.description}>{description}</Text>
+              <TouchableOpacity onPress={toggleEditing} style={styles.editButton}>
+                <FontAwesome name="edit" size={24} color="black" />
+              </TouchableOpacity>
+            </>
+          )}
+        </View>
+        <Text style={styles.subTitle}>Favorite Recipes:</Text>
+        <FlatList
+          data={favoriteRecipes}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => handleRecipePress(item)}>
+              <View style={styles.recipeItemContainer}>
+                <Text style={styles.recipeName}>{item.name}</Text>
+              </View>
             </TouchableOpacity>
-          </>
+          )}
+          ListEmptyComponent={<Text style={styles.emptyText}>No favorite recipes</Text>}
+        />
+
+        {selectedRecipe && (
+          <Modal
+            visible={isModalVisible}
+            animationType="slide"
+            onRequestClose={closeModal}
+          >
+            <View style={styles.modalContainer}>
+              <Text style={styles.modalTitle}>{selectedRecipe.name}</Text>
+              <Text style={styles.subTitle}>Ingredients:</Text>
+              {selectedRecipe.ingredients.map((ingredient, index) => (
+                <Text key={index} style={styles.ingredient}>{ingredient}</Text>
+              ))}
+              <Text style={styles.subTitle}>Instructions:</Text>
+              {selectedRecipe.instructions.map((instruction, index) => (
+                <Text key={index} style={styles.instruction}>{instruction}</Text>
+              ))}
+              <Button title="Close" onPress={closeModal} />
+            </View>
+          </Modal>
         )}
       </View>
-      <Text style={styles.subTitle}>Favorite Recipes:</Text>
-      <FlatList
-        data={favoriteRecipes}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => handleRecipePress(item)}>
-            <View style={styles.recipeItemContainer}>
-              <Text style={styles.recipeName}>{item.name}</Text>
-            </View>
-          </TouchableOpacity>
-        )}
-        ListEmptyComponent={<Text style={styles.emptyText}>No favorite recipes</Text>}
-      />
-
-      {selectedRecipe && (
-        <Modal
-          visible={isModalVisible}
-          animationType="slide"
-          onRequestClose={closeModal}
-        >
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>{selectedRecipe.name}</Text>
-            <Text style={styles.subTitle}>Ingredients:</Text>
-            {selectedRecipe.ingredients.map((ingredient, index) => (
-              <Text key={index} style={styles.ingredient}>{ingredient}</Text>
-            ))}
-            <Text style={styles.subTitle}>Instructions:</Text>
-            {selectedRecipe.instructions.map((instruction, index) => (
-              <Text key={index} style={styles.instruction}>{instruction}</Text>
-            ))}
-            <Button title="Close" onPress={closeModal} />
-          </View>
-        </Modal>
-      )}
-    </View>
+    </ImageBackground>
   );
 };
 
@@ -156,16 +157,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
-    backgroundColor: '#FFDDDD',
+    backgroundColor: 'rgba(0,0,0,0)', // Add transparency for the background image
+  },
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover',
   },
   profileContainer: {
     alignItems: 'center',
-    marginBottom: 16,
+    marginTop: 70,
   },
   input: {
     height: 40,
     borderColor: 'black',
-    borderWidth: 2, 
+    borderWidth: 2,
     paddingHorizontal: 8,
     marginBottom: 16,
     width: '80%',
@@ -179,12 +184,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     marginBottom: 16,
-  },
-  image: {
-    width: '110%',
-    height: 300,
-    resizeMode: 'cover',
-    marginBottom: 10,
   },
   editButton: {
     position: 'absolute',

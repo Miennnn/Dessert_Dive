@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Modal, ScrollView } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Modal, ScrollView, ImageBackground } from 'react-native';
 import { FIRESTORE_DB } from '../../FirebaseConfig'; 
 import { collection, getDocs } from "firebase/firestore"; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -90,96 +90,101 @@ const IngredientsList: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Ingredients List</Text>
-      <View style={styles.form}>
-        <Text style={styles.label}>Select an Ingredient:</Text>
-        <TouchableOpacity onPress={() => setIsModalVisible(true)} style={styles.dropdownButton}>
-          <Text style={styles.dropdownButtonText}>↓</Text>
-        </TouchableOpacity>
-      </View>
-      <FlatList
-        data={ingredients}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item, index }) => (
-          <View style={styles.ingredientContainer}>
-            <Text style={styles.ingredient}>{item}</Text>
-            <TouchableOpacity onPress={() => handleRemoveIngredient(index)} style={styles.deleteButton}>
-              <Text style={styles.deleteButtonText}>Remove</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      />
-      <Text style={styles.subtitle}>Available Recipes:</Text>
-      <FlatList
-        data={getAvailableRecipes()}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => handleRecipePress(item)}>
-            <View style={styles.recipeContainer}>
-              <Text style={styles.recipe}>{item.name}</Text>
-            </View>
+    <ImageBackground source={require('../../assets/images/ingredient_background.jpg')} style={styles.backgroundImage}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Ingredients List</Text>
+        <View style={styles.form}>
+          <Text style={styles.label}>Select an Ingredient:</Text>
+          <TouchableOpacity onPress={() => setIsModalVisible(true)} style={styles.dropdownButton}>
+            <Text style={styles.dropdownButtonText}>↓</Text>
           </TouchableOpacity>
-        )}
-      />
-      <Modal
-        visible={isModalVisible}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setIsModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <ScrollView>
-              {allIngredients.length > 0 ? (
-                allIngredients.map((ingredient, index) => (
-                  <TouchableOpacity key={index} onPress={() => handleIngredientSelect(ingredient)} style={styles.modalItem}>
-                    <Text style={styles.modalItemText}>{ingredient}</Text>
-                  </TouchableOpacity>
-                ))
-              ) : (
-                <Text style={styles.noMoreIngredientsText}>No ingredients available</Text>
-              )}
-            </ScrollView>
-          </View>
         </View>
-      </Modal>
-      {selectedRecipe && (
-        <Modal
-          visible={isRecipeModalVisible}
-          animationType="slide"
-          onRequestClose={closeRecipeModal}
-        >
-          <View style={styles.recipeModalContainer}>
-            <Text style={styles.modalTitle}>{selectedRecipe.name}</Text>
-            <Text style={styles.subTitle}>Ingredients:</Text>
-            {selectedRecipe.ingredients.map((ingredient: string, index: number) => (
-              <Text key={index} style={styles.ingredient}>{ingredient}</Text>
-            ))}
-            <Text style={styles.subTitle}>Instructions:</Text>
-            {selectedRecipe.instructions.map((instruction: string, index: number) => (
-              <Text key={index} style={styles.instruction}>{instruction}</Text>
-            ))}
-            <TouchableOpacity onPress={closeRecipeModal} style={styles.closeButton}>
-              <Text style={styles.closeButtonText}>Close</Text>
+        <FlatList
+          data={ingredients}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item, index }) => (
+            <View style={styles.ingredientContainer}>
+              <Text style={styles.ingredient}>{item}</Text>
+              <TouchableOpacity onPress={() => handleRemoveIngredient(index)} style={styles.deleteButton}>
+                <Text style={styles.deleteButtonText}>Remove</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        />
+        <Text style={styles.subtitle}>Available Recipes:</Text>
+        <FlatList
+          data={getAvailableRecipes()}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => handleRecipePress(item)}>
+              <View style={styles.recipeContainer}>
+                <Text style={styles.recipe}>{item.name}</Text>
+              </View>
             </TouchableOpacity>
+          )}
+        />
+        <Modal
+          visible={isModalVisible}
+          transparent={true}
+          animationType="slide"
+          onRequestClose={() => setIsModalVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <ScrollView>
+                {allIngredients.length > 0 ? (
+                  allIngredients.map((ingredient, index) => (
+                    <TouchableOpacity key={index} onPress={() => handleIngredientSelect(ingredient)} style={styles.modalItem}>
+                      <Text style={styles.modalItemText}>{ingredient}</Text>
+                    </TouchableOpacity>
+                  ))
+                ) : (
+                  <Text style={styles.noMoreIngredientsText}>No ingredients available</Text>
+                )}
+              </ScrollView>
+            </View>
           </View>
         </Modal>
-      )}
-    </View>
+        {selectedRecipe && (
+          <Modal
+            visible={isRecipeModalVisible}
+            animationType="slide"
+            onRequestClose={closeRecipeModal}
+          >
+            <View style={styles.recipeModalContainer}>
+              <Text style={styles.modalTitle}>{selectedRecipe.name}</Text>
+              <Text style={styles.subTitle}>Ingredients:</Text>
+              {selectedRecipe.ingredients.map((ingredient: string, index: number) => (
+                <Text key={index} style={styles.ingredient}>{ingredient}</Text>
+              ))}
+              <Text style={styles.subTitle}>Instructions:</Text>
+              {selectedRecipe.instructions.map((instruction: string, index: number) => (
+                <Text key={index} style={styles.instruction}>{instruction}</Text>
+              ))}
+              <TouchableOpacity onPress={closeRecipeModal} style={styles.closeButton}>
+                <Text style={styles.closeButtonText}>Close</Text>
+              </TouchableOpacity>
+            </View>
+          </Modal>
+        )}
+      </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover',
+  },
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#FFDDDD',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 16,
+    marginTop: 80,
   },
   subtitle: {
     fontSize: 20,
@@ -231,9 +236,6 @@ const styles = StyleSheet.create({
   recipe: {
     fontSize: 18,
     fontWeight: 'bold',
-  },
-  recipeInstructions: {
-    fontSize: 14,
   },
   modalContainer: {
     flex: 1,

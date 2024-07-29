@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView, Image} from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView, ImageBackground } from 'react-native';
 import { FIRESTORE_DB } from '../../FirebaseConfig';
 import { collection, getDocs } from "firebase/firestore";
 
@@ -58,115 +58,114 @@ const Questionnaire: React.FC<{ navigation: any }> = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Image source={require('../../assets/images/dessert.jpg')} style={styles.image} />
-      <Text style={styles.title}>Dessert Preferences</Text>
+    <ImageBackground source={require('../../assets/images/questionaire_background.png')} style={styles.backgroundImage}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Dessert Preferences</Text>
 
-      <View style={styles.questionContainer}>
-        <Text style={styles.label}>Would you prefer the dessert to be hot or cold?</Text>
-        <View style={styles.buttonGroup}>
-          <TouchableOpacity
-            style={[styles.optionButton, temperature === 'hot' && styles.selectedButton]}
-            onPress={() => setTemperature('hot')}
-          >
-            <Text style={styles.buttonText}>Hot</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.optionButton, temperature === 'cold' && styles.selectedButton]}
-            onPress={() => setTemperature('cold')}
-          >
-            <Text style={styles.buttonText}>Cold</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      <View style={styles.questionContainer}>
-        <Text style={styles.label}>Would you like it to be more sweet or savory?</Text>
-        <View style={styles.buttonGroup}>
-          <TouchableOpacity
-            style={[styles.optionButton, flavor === 'sweet' && styles.selectedButton]}
-            onPress={() => setFlavor('sweet')}
-          >
-            <Text style={styles.buttonText}>Sweet</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.optionButton, flavor === 'savoury' && styles.selectedButton]}
-            onPress={() => setFlavor('savoury')}
-          >
-            <Text style={styles.buttonText}>Savoury</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      <View style={styles.questionContainer}>
-        <Text style={styles.label}>Would you prefer it to be alcoholic or non-alcoholic?</Text>
-        <View style={styles.buttonGroup}>
-          <TouchableOpacity
-            style={[styles.optionButton, alcohol === 'alcoholic' && styles.selectedButton]}
-            onPress={() => setAlcohol('alcoholic')}
-          >
-            <Text style={styles.buttonText}>Alcoholic</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.optionButton, alcohol === 'non-alcoholic' && styles.selectedButton]}
-            onPress={() => setAlcohol('non-alcoholic')}
-          >
-            <Text style={styles.buttonText}>Non-alcoholic</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-        <Text style={styles.submitButtonText}>Recommend</Text>
-      </TouchableOpacity>
-
-      {recommendedRecipe && (
-        <View style={styles.resultContainer}>
-          <TouchableOpacity onPress={() => setIsModalVisible(true)}>
-            <Text style={styles.label}>Recommended Dessert: <Text style={styles.boldText}>{recommendedRecipe.name}</Text></Text>
-          </TouchableOpacity>
-        </View>
-      )}
-
-      {recommendedRecipe && (
-        <Modal
-          visible={isModalVisible}
-          animationType="slide"
-          onRequestClose={closeModal}
-        >
-          <ScrollView contentContainerStyle={styles.modalContainer}>
-            <Text style={styles.modalTitle}>{recommendedRecipe.name}</Text>
-            <Text style={styles.subTitle}>Ingredients:</Text>
-            {recommendedRecipe.ingredients.map((ingredient: string, index: number) => (
-              <Text key={index} style={styles.ingredient}>{ingredient}</Text>
-            ))}
-            <Text style={styles.subTitle}>Instructions:</Text>
-            {recommendedRecipe.instructions.map((instruction: string, index: number) => (
-              <Text key={index} style={styles.instruction}>{instruction}</Text>
-            ))}
-            <TouchableOpacity onPress={closeModal} style={styles.closeButton}>
-              <Text style={styles.closeButtonText}>Close</Text>
+        <View style={styles.questionContainer}>
+          <Text style={styles.label}>Would you prefer the dessert to be hot or cold?</Text>
+          <View style={styles.buttonGroup}>
+            <TouchableOpacity
+              style={[styles.optionButton, temperature === 'hot' && styles.selectedButton]}
+              onPress={() => setTemperature('hot')}
+            >
+              <Text style={styles.buttonText}>Hot</Text>
             </TouchableOpacity>
-          </ScrollView>
-        </Modal>
-      )}
-    </View>
+            <TouchableOpacity
+              style={[styles.optionButton, temperature === 'cold' && styles.selectedButton]}
+              onPress={() => setTemperature('cold')}
+            >
+              <Text style={styles.buttonText}>Cold</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={styles.questionContainer}>
+          <Text style={styles.label}>Would you like it to be more sweet or savory?</Text>
+          <View style={styles.buttonGroup}>
+            <TouchableOpacity
+              style={[styles.optionButton, flavor === 'sweet' && styles.selectedButton]}
+              onPress={() => setFlavor('sweet')}
+            >
+              <Text style={styles.buttonText}>Sweet</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.optionButton, flavor === 'savoury' && styles.selectedButton]}
+              onPress={() => setFlavor('savoury')}
+            >
+              <Text style={styles.buttonText}>Savoury</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={styles.questionContainer}>
+          <Text style={styles.label}>Would you prefer it to be alcoholic or non-alcoholic?</Text>
+          <View style={styles.buttonGroup}>
+            <TouchableOpacity
+              style={[styles.optionButton, alcohol === 'alcoholic' && styles.selectedButton]}
+              onPress={() => setAlcohol('alcoholic')}
+            >
+              <Text style={styles.buttonText}>Alcoholic</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.optionButton, alcohol === 'non-alcoholic' && styles.selectedButton]}
+              onPress={() => setAlcohol('non-alcoholic')}
+            >
+              <Text style={styles.buttonText}>Non-alcoholic</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+          <Text style={styles.submitButtonText}>Recommend</Text>
+        </TouchableOpacity>
+
+        {recommendedRecipe && (
+          <View style={styles.resultContainer}>
+            <TouchableOpacity onPress={() => setIsModalVisible(true)}>
+              <Text style={styles.label}>Recommended Dessert: <Text style={styles.boldText}>{recommendedRecipe.name}</Text></Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {recommendedRecipe && (
+          <Modal
+            visible={isModalVisible}
+            animationType="slide"
+            onRequestClose={closeModal}
+          >
+            <ScrollView contentContainerStyle={styles.modalContainer}>
+              <Text style={styles.modalTitle}>{recommendedRecipe.name}</Text>
+              <Text style={styles.subTitle}>Ingredients:</Text>
+              {recommendedRecipe.ingredients.map((ingredient: string, index: number) => (
+                <Text key={index} style={styles.ingredient}>{ingredient}</Text>
+              ))}
+              <Text style={styles.subTitle}>Instructions:</Text>
+              {recommendedRecipe.instructions.map((instruction: string, index: number) => (
+                <Text key={index} style={styles.instruction}>{instruction}</Text>
+              ))}
+              <TouchableOpacity onPress={closeModal} style={styles.closeButton}>
+                <Text style={styles.closeButtonText}>Close</Text>
+              </TouchableOpacity>
+            </ScrollView>
+          </Modal>
+        )}
+      </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover',
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
-    backgroundColor: '#FFDDDD',
-  },
-  image: {
-    width: '110%',
-    height: 300,
-    resizeMode: 'cover',
-    marginBottom: 10,
+    backgroundColor: 'rgba(0,0,0,0)', // Add transparency for the background image
   },
   title: {
     fontSize: 24,
@@ -176,6 +175,7 @@ const styles = StyleSheet.create({
   questionContainer: {
     marginBottom: 16,
     width: '100%',
+    borderBlockColor: '#ccc',
   },
   label: {
     fontSize: 16,
@@ -222,6 +222,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8f8f8',
     borderRadius: 4,
     alignItems: 'center',
+    color:'black',
   },
   modalContainer: {
     flex: 1,

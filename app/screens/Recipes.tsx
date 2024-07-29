@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, TextInput, Modal, Button, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, TextInput, Modal, Button, ScrollView, KeyboardAvoidingView, Platform, ImageBackground} from 'react-native';
 import { FIRESTORE_DB } from '../../FirebaseConfig'; 
 import { collection, getDocs, updateDoc, doc } from "firebase/firestore"; 
 import { FontAwesome } from '@expo/vector-icons';
@@ -11,7 +11,6 @@ interface Recipe {
   instructions: string[];
   isFavorite: boolean;
 }
-
 const Recipes: React.FC = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
@@ -123,81 +122,83 @@ const Recipes: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Recipes</Text>
-      <TextInput
-        style={styles.searchBar}
-        placeholder="Search Recipes..."
-        value={searchQuery}
-        onChangeText={handleSearch}
-      />
-      <FlatList
-        data={filteredRecipes}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.recipeItemContainer}>
-            <TouchableOpacity style={styles.recipeItem} onPress={() => handleRecipePress(item)}>
-              <Text style={styles.recipeName}>{item.name}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => toggleFavorite(item.id)}>
-              <FontAwesome
-                name={item.isFavorite ? 'star' : 'star-o'}
-                size={24}
-                color={item.isFavorite ? 'gold' : 'gray'}
-              />
-            </TouchableOpacity>
-          </View>
-        )}
-      />
-      {selectedRecipe && (
-        <Modal
-          visible={isModalVisible}
-          animationType="slide"
-          onRequestClose={closeModal}
-        >
-          <ScrollView contentContainerStyle={styles.modalContainer}>
-            <Text style={styles.modalTitle}>{selectedRecipe.name}</Text>
-            <Text style={styles.subTitle}>Ingredients:</Text>
-            {selectedRecipe.ingredients.map((ingredient, index) => (
-              <Text key={index} style={styles.ingredient}>{ingredient}</Text>
-            ))}
-            <Text style={styles.subTitle}>Instructions:</Text>
-            {selectedRecipe.instructions.map((instruction, index) => (
-              <View key={index} style={styles.instructionContainer}>
-                <TouchableOpacity 
-                  style={[styles.checkbox, instruction.completed && styles.checkboxCompleted]}
-                  onPress={() => toggleInstructionCompletion(index)}
+    <ImageBackground source={require('../../assets/images/recipe_background.jpg')} style={styles.backgroundImage}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Recipes</Text>
+        <TextInput
+          style={styles.searchBar}
+          placeholder="Search Recipes..."
+          value={searchQuery}
+          onChangeText={handleSearch}
+        />
+        <FlatList
+          data={filteredRecipes}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <View style={styles.recipeItemContainer}>
+              <TouchableOpacity style={styles.recipeItem} onPress={() => handleRecipePress(item)}>
+                <Text style={styles.recipeName}>{item.name}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => toggleFavorite(item.id)}>
+                <FontAwesome
+                  name={item.isFavorite ? 'star' : 'star-o'}
+                  size={24}
+                  color={item.isFavorite ? 'gold' : 'gray'}
                 />
-                <Text style={styles.instruction}>{instruction.text}</Text>
-              </View>
-            ))}
-            <View style={styles.timerContainer}>
-              <TextInput
-                style={styles.timerInput}
-                placeholder="Minutes"
-                keyboardType="numeric"
-                value={inputMinutes}
-                onFocus={() => setIsEditingTime(true)}
-                onChangeText={setInputMinutes}
-              />
-              <Text style={styles.timerLabel}>min</Text>
-              <TextInput
-                style={styles.timerInput}
-                placeholder="Seconds"
-                keyboardType="numeric"
-                value={inputSeconds}
-                onFocus={() => setIsEditingTime(true)}
-                onChangeText={setInputSeconds}
-              />
-              <Text style={styles.timerLabel}>sec</Text>
-              <Button title="Start Timer" onPress={handleStartTimer} />
+              </TouchableOpacity>
             </View>
-            <Text style={styles.timer}>Time remaining: {Math.floor(remainingTime / 60)}:{(remainingTime % 60).toString().padStart(2, '0')}</Text>
-            <Button title="Close" onPress={closeModal} />
-          </ScrollView>
-        </Modal>
-      )}
-    </View>
+          )}
+        />
+        {selectedRecipe && (
+          <Modal
+            visible={isModalVisible}
+            animationType="slide"
+            onRequestClose={closeModal}
+          >
+            <ScrollView contentContainerStyle={styles.modalContainer}>
+              <Text style={styles.modalTitle}>{selectedRecipe.name}</Text>
+              <Text style={styles.subTitle}>Ingredients:</Text>
+              {selectedRecipe.ingredients.map((ingredient, index) => (
+                <Text key={index} style={styles.ingredient}>{ingredient}</Text>
+              ))}
+              <Text style={styles.subTitle}>Instructions:</Text>
+              {selectedRecipe.instructions.map((instruction, index) => (
+                <View key={index} style={styles.instructionContainer}>
+                  <TouchableOpacity 
+                    style={[styles.checkbox, instruction.completed && styles.checkboxCompleted]}
+                    onPress={() => toggleInstructionCompletion(index)}
+                  />
+                  <Text style={styles.instruction}>{instruction.text}</Text>
+                </View>
+              ))}
+              <View style={styles.timerContainer}>
+                <TextInput
+                  style={styles.timerInput}
+                  placeholder="Minutes"
+                  keyboardType="numeric"
+                  value={inputMinutes}
+                  onFocus={() => setIsEditingTime(true)}
+                  onChangeText={setInputMinutes}
+                />
+                <Text style={styles.timerLabel}>min</Text>
+                <TextInput
+                  style={styles.timerInput}
+                  placeholder="Seconds"
+                  keyboardType="numeric"
+                  value={inputSeconds}
+                  onFocus={() => setIsEditingTime(true)}
+                  onChangeText={setInputSeconds}
+                />
+                <Text style={styles.timerLabel}>sec</Text>
+                <Button title="Start Timer" onPress={handleStartTimer} />
+              </View>
+              <Text style={styles.timer}>Time remaining: {Math.floor(remainingTime / 60)}:{(remainingTime % 60).toString().padStart(2, '0')}</Text>
+              <Button title="Close" onPress={closeModal} />
+            </ScrollView>
+          </Modal>
+        )}
+      </View>
+    </ImageBackground>
   );
 };
 
@@ -205,7 +206,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#FFDDDD',
+    backgroundColor: 'rgba(0,0,0,0)', // Add transparency for the background image
+  },
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover',
   },
   title: {
     fontSize: 24,
@@ -213,7 +218,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   searchBar: {
-    height: 40,
+    height: 50,
     borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 8,
